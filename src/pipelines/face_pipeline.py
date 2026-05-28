@@ -1,5 +1,6 @@
 
 import dlib
+import cv2
 import numpy as np
 import face_recognition_models
 from sklearn.svm import SVC
@@ -25,6 +26,20 @@ def load_dlib_models():
 
 def get_face_embeddings(image_np):
     detector, sp, facerec = load_dlib_models()
+
+
+
+    # Convert image into proper uint8 format
+    image_np = np.array(image_np, dtype=np.uint8)
+
+    # If image has 4 channels (RGBA)
+    if len(image_np.shape) == 3 and image_np.shape[2] == 4:
+        image_np = cv2.cvtColor(image_np, cv2.COLOR_RGBA2RGB)
+
+    # If image has 3 channels (BGR)
+    elif len(image_np.shape) == 3 and image_np.shape[2] == 3:
+        image_np = cv2.cvtColor(image_np, cv2.COLOR_BGR2RGB)
+
     faces = detector(image_np, 1)
 
     encodings= []
